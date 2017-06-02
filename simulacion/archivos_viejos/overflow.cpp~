@@ -1,0 +1,17 @@
+#include <iostream>
+
+void main(){
+
+  double under = 1;
+  double over = 1;
+  int n = 0;
+  for(int i=1 ; i <n; i++){
+    under = under/2.0;
+    over = over*2.0;
+    std::cout << "Under" << under << "\n" ;
+    std::cout << "Over" << over << "\n";
+
+  }
+  
+
+}

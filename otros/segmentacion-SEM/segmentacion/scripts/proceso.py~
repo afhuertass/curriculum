@@ -1,0 +1,217 @@
+from __future__ import division
+
+import skimage
+from skimage import measure
+from skimage import io
+from skimage import filters
+from skimage.feature import peak_local_max
+from skimage.morphology import erosion, dilation, opening, closing, white_tophat, black_tophat
+
+from skimage.morphology import rectangle 
+from skimage.morphology import watershed
+from skimage.morphology import remove_small_holes
+from skimage.morphology import remove_small_objects
+from skimage.segmentation import random_walker
+
+import matplotlib.pyplot as plt
+from scipy import ndimage
+import numpy as np
+
+
+scale = io.imread("../datos/sel/500um.png")
+longi_um = 500 # milimetros 
+
+longi_px = float( scale.shape[1] ) # longitud
+
+px_um = longi_um/longi_px
+
+px2_um = px_um**2
+
+print(px_um)
+dato = io.imread("../datos/sel/nl-1.png" )
+
+R = dato[:,:,0]
+G = dato[:,:,1]
+B = dato[:,:,2]
+
+
+imGris=0.21*R + 0.71*G + 0.07*B  
+
+n = 10
+l = 256
+#dato_gauss = filters.gaussian( imGris, l/(4.0*n)  )
+
+
+
+
+
+#local_maxi = peak_local_max( distance , indices=False , footprint=np.ones(3,3) , labels = dato_gauss)
+
+
+val = filters.threshold_otsu(imGris)
+
+mask = imGris < val
+#binarizar :
+
+print(dato.shape)
+
+plt.imshow(  mask  , interpolation='nearest' , cmap='gray' )
+plt.show()
+
+
+
+
+less_holes = remove_small_holes(mask , 1000 )
+
+
+image = remove_small_objects( less_holes , 350 )
+cubito = rectangle( 2 , 2 )
+op = opening(mask , cubito)
+
+cubito = rectangle( 5 , 5 )
+
+#dil = dilation( mask , cubito  )
+
+
+n=5
+l = 25
+#mediann = filters.median( less_holes , cubito )
+
+
+gaussiano2 =  filters.gaussian( image , l/(4.0*n)  )
+
+plt.imshow( gaussiano2 , interpolation='nearest' , cmap='gray' )
+
+plt.show()
+
+sobel = filters.sobel(gaussiano2)
+
+plt.imshow( sobel , interpolation='nearest' , cmap='gray' )
+
+plt.show()
+
+new_val = filters.threshold_otsu( gaussiano2 )
+mask2 = gaussiano2 < new_val
+
+#mask2 = filters.sobel(mask2)
+plt.imshow(  mask2  , interpolation='nearest' , cmap='gray' )
+
+plt.show()
+
+
+
+
+distance = ndimage.distance_transform_edt(mask2)
+local_maxi = peak_local_max(distance, indices=False, footprint=np.ones((3, 3)), labels=mask2)
+
+plt.imshow(-distance, interpolation='nearest')
+plt.show()
+
+markers = skimage.morphology.label(local_maxi)
+labels_ws = watershed(-distance, markers, mask=mask2)
+
+markers[~mask2] = -1
+#labels_rw = random_walker(mask2, markers)
+
+plt.imshow(labels_ws, cmap='spectral', interpolation='nearest')
+plt.show()
+
+
+#plt.imshow(labels_rw, cmap='spectral', interpolation='nearest')
+#plt.show()
+
+
+
+
+props = measure.regionprops( labels_ws )
+#props_rw = measure.regionprops( labels_rw )
+
+
+#print("Elementos identificados - random walk")
+#print(len(props_rw))
+
+print("Elementos identificados - watersheed ")
+
+print(len(props))
+
+
+
+areatotal = 0
+areabig = 0
+coordbig = 0
+imgbig = ""
+for prop in props:
+    
+    if prop.area > areabig :
+        areabig = prop.area
+        coordbig = prop.coords
+        imgbig = prop.image
+    areatotal = areatotal + prop.area
+
+plt.imshow(imgbig, cmap='gray', interpolation='nearest')
+plt.show()
+
+print("Area total - Watersheed" )
+print( areatotal*px2_um )
+
+print("Elemento mayor area - Watersheed:")
+print(areabig*px2_um)
+
+
+areatotal = 0
+areabig = 0
+imgbig = ""
+
+"""
+for prop in props_rw:
+    
+    if prop.area > areabig :
+        areabig = prop.area
+        coordbig = prop.coords
+        imgbig = prop.image
+    areatotal = areatotal + prop.area
+
+plt.imshow(imgbig, cmap='gray', interpolation='nearest')
+plt.show()
+"""
+
+print("Area total - Random Walk " )
+print( areatotal )
+
+print("Elemento mayor area - Random Walk:")
+print(areabig)
+
+porcentaje = (float(areatotal)/float(mask2.size) )
+print("Area ocupada, porcentaje ")
+print(porcentaje)
+
+
+### most simple
+
+granos = measure.label( mask2 )
+props = measure.regionprops( granos )
+areatotal = 0
+areabig = 0
+coordbig = 0
+imgbig = ""
+for prop in props:
+    
+    if prop.area > areabig :
+        areabig = prop.area
+        coordbig = prop.coords
+        imgbig = prop.image
+    areatotal = areatotal + prop.area
+
+
+plt.imshow(imgbig, cmap='gray', interpolation='nearest')
+plt.show()
+print("Elementos identificados - backgroud/foreground ")
+print(len(props))
+
+print("Area total - background/foreground" )
+print( areatotal*px2_um )
+
+print("Elemento mayor area -background/foreground ")
+print(areabig*px2_um)
+
+

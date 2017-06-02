@@ -1,0 +1,10 @@
+trainingInput:
+ scaleTier: CUSTOM
+ 
+ masterType: large_model
+ workerType: large_model
+ workerCount : 3
+ parameterServerType: large_model
+ parameterServerCount: 3
+ 
+ runtimeVersion: "1.0"

@@ -1,0 +1,24 @@
+// archivo de configuracion del lattice
+
+{
+"dimensiones" : {
+    "Lx": 50 ,
+    "Ly" :50,
+    "Lz" : 50
+}
+
+"elementos" : [
+    "fuente":{
+	"lx" : 10, "ly" : 10 , "lz" : 10  
+    } , 
+    "rendija" : {
+	"lx" : 20 , "lz" : 20 , "lxr" : 10 , "lzr" : 10 ,
+	"ancho" : 5
+    }
+    "lente" : {
+	"lx" : 50 ,"ly" : 50 , "lz" : 50 , "radio" : 5 
+    }
+    
+]
+
+}

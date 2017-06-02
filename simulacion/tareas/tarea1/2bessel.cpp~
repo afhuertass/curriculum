@@ -1,0 +1,51 @@
+#include <iostream>
+#include <cmath>
+// implentacion modelo sir. ecuaciones acopladas. 
+using namespace std;
+// parametros del modelo 
+
+
+
+double f1(double r,double r1, double r2){ // funcion ds/dt = f1 = -betasi
+  return r2;
+}
+double f2(double r, double r1, double r2, double lambda){
+  double lam2 = lambda*lambda;
+  //double r_2 = r*r;
+  //double raz2 = r1/r_2;
+  return (-lam2*r1-r2/r );
+
+}
+
+double PasoRungeKutta(double  &R , double &R1 , double &R2 , double H, double LAM){
+double K11,K12, K13,K14;
+double K21,K22, K23,K24;
+
+ K11 = H*f1(R,R1,R2);                   K21 = H*f2(R,R1,R2,LAM);
+ K12 = H*f1(R+H/2 , R1+K11/2, R2+K21/2); K22 = H*f2(R+H/2 , R1+K11/2,R2+K21/2,LAM);
+ K13 = H*f1(R+H/2 , R1+K12/2 ,R2+K22/2); K23 = H*f2(R+H/2 , R1+K12/2,R2+K22/2,LAM);
+ K14 = H*f1(R+H, R1+K13, R2+K23);         K24 = H*f2(R+H, R1+K13, R2+K23,LAM);
+
+R+=H;
+R1+= (K11 + 2*K12 + 2*K13 + K14)/6;
+R2+= (K21 + 2*K22 + 2*K23 + K24)/6;
+ return 0.0;
+}
+int main(void){
+  double r = 0.01,  r1 = 1 , r2 = 0 ;
+ double h = 0.1, lambda = 0.01;
+  while ( lambda <= 15){
+    r = 0.01 ; r1 = 1 ; r2 = 0;
+    while ( r < 10){
+      
+      // aqui necesitamos f(lamba) = r 
+      //cout << r << " " << r1 <<endl;
+      if( r == 1.01){ // r1 es R(1)
+	cout << lambda << " " << r1 << endl;
+	
+      }
+      PasoRungeKutta(r,r1,r2,h,lambda);
+    }
+    lambda +=0.01;
+  }
+}

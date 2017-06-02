@@ -1,0 +1,5 @@
+## programa para encontrar las raices de la funcion f(lambda)
+
+import numpy as np
+
+data = np.recfromcsv("2bessel.dat");

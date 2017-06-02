@@ -1,0 +1,11 @@
+import pyscreenshot as ImageGrab
+import numpy as np
+
+
+
+im = ImageGrab.grab()
+im = ImageGrab.grab(bbox=(10,10,510,510))
+
+
+img_np = np.array( im )
+#im.show()

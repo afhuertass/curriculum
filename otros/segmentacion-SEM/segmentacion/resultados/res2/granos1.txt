@@ -1,0 +1,21 @@
+0.00666666666667
+(546, 728, 3)
+Elementos identificados - watersheed 
+58
+Area total - Watersheed
+1.97915555556
+Elemento mayor area - Watersheed:
+0.167911111111
+Area total - Random Walk 
+0
+Elemento mayor area - Random Walk:
+0
+Area ocupada, porcentaje 
+0.0
+Elementos identificados - backgroud/foreground 
+13
+Area total - background/foreground
+1.97915555556
+Elemento mayor area -background/foreground 
+0.466844444444
+
